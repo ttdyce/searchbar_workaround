@@ -18,6 +18,8 @@ class PinnedSearchBarApp extends StatefulWidget {
 }
 
 class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
+  final focusNode = FocusScopeNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,37 +34,46 @@ class _PinnedSearchBarAppState extends State<PinnedSearchBarApp> {
               backgroundColor: Colors.transparent,
               floating:
                   true, // We can also uncomment this line and set `pinned` to true to see a pinned search bar.
-              title: SearchAnchor.bar(
-                  suggestionsBuilder:
-                      (BuildContext context, SearchController controller) {
-                    return List<Widget>.generate(
-                      5,
-                      (int index) {
-                        return ListTile(
-                          titleAlignment: ListTileTitleAlignment.center,
-                          title: Text('Initial list item $index'),
-                        );
-                      },
-                    );
-                  },
-                  barTrailing: [
-                    IconButton.filledTonal(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => const AlertDialog(
-                                  title: Text("Title"),
-                                  content: Text("Content"),
-                                ));
-                      },
-                      icon: ClipOval(
-                        child: Image.network(
-                          "https://www.gravatar.com/avatar/b004c065bc529e98545e27af859152bb74007e535f2c149284117cfb520e76d6?d=retro&f=y",
-                          height: 24,
+              title: FocusScope(
+                node: focusNode,
+                onFocusChange: (isFocused) {
+                  debugPrint('focused $isFocused');
+                  if (isFocused) {
+                    focusNode.unfocus();
+                  }
+                },
+                child: SearchAnchor.bar(
+                    suggestionsBuilder:
+                        (BuildContext context, SearchController controller) {
+                      return List<Widget>.generate(
+                        5,
+                        (int index) {
+                          return ListTile(
+                            titleAlignment: ListTileTitleAlignment.center,
+                            title: Text('Initial list item $index'),
+                          );
+                        },
+                      );
+                    },
+                    barTrailing: [
+                      IconButton.filledTonal(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => const AlertDialog(
+                                    title: Text("Title"),
+                                    content: Text("Content"),
+                                  ));
+                        },
+                        icon: ClipOval(
+                          child: Image.network(
+                            "https://www.gravatar.com/avatar/b004c065bc529e98545e27af859152bb74007e535f2c149284117cfb520e76d6?d=retro&f=y",
+                            height: 24,
+                          ),
                         ),
                       ),
-                    ),
-                  ]),
+                    ]),
+              ),
             ),
             // The listed items below are just for filling the screen
             // so we can see the scrolling effect.
